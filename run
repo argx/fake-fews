@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# Running test
+node test.js
