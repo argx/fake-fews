@@ -1,4 +1,4 @@
 #!/bin/bash
 
-# Running test
-node test.js
+# Run local server
+python src/server.py
