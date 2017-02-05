@@ -6,7 +6,6 @@ from model import * # from ./model.py
 import urllib.parse as urlparse
 import urllib
 import http.client
-import requests
 import ssl
 
 # Globals
@@ -45,75 +44,66 @@ def feedPost(params):
 
     return "Success!";
 
-# TODO account for redirect page
 def unshorten_url(url):
-
-    # Parse URL from Facebook URL
-    params = urlparse.parse_qs(urlparse.urlparse(url).query)
-    orig_url = urllib.parse.unquote(params["u"][0])
-
-    # Get redirected URL
-    r = requests.head(orig_url, allow_redirects=True)
-    return r.url
-
     parsed = urlparse.urlparse(url)
+	print(parsed)
+
     h = http.client.HTTPConnection(parsed.netloc)
     h.request('HEAD', parsed.path)
     response = h.getresponse()
-
     if response.status/100 == 3 and response.getheader('Location'):
-        return response.getheader('Location')
+	return response.getheader('Location')
     else:
-        return url
+	return url
 
 class ClassificationHandler(http.server.SimpleHTTPRequestHandler):
     """HTTP Handler for Facebook Chrome extension"""
 
     def strip_extra(self, arr):
-        redux_arr = []
-        for el in arr:
-            if el == "0" or el == "1":
-                redux_arr.append(el)
+	redux_arr = []
+	for el in arr:
+	    if el == "0" or el == "1":
+		redux_arr.append(el)
 
-        return redux_arr
+	return redux_arr
 
     def do_POST(self):
-        """Handle a POST request by parsing training example and feeding into model"""
+	"""Handle a POST request by parsing training example and feeding into model"""
 
-        path = self.path
-        api = path.split("?")[0];
-        print("API = " + str(api))
+	path = self.path
+	api = path.split("?")[0];
+	print("API = " + str(api))
 
-        # Get params
-        params = urlparse.parse_qs(urlparse.urlparse(path).query)
+	# Get params
+	params = urlparse.parse_qs(urlparse.urlparse(path).query)
 
-        # Call API
-        response = None
-        if api == "/classifyPost":
-            response = classifyPost(params)
-        elif api == "/feedPost":
-            response = feedPost(params)
-        else:
-            response = "error" # done fucked up
+	# Call API
+	response = None
+	if api == "/classifyPost":
+	    response = classifyPost(params)
+	elif api == "/feedPost":
+	    response = feedPost(params)
+	else:
+	    response = "error" # done fucked up
 
-        # Train on data data
-        self.send_response(200)
-        self.send_header("Content-type", "text/html")
-        self.send_header("Content-length", len(response))
-        self.end_headers()
+	# Train on data data
+	self.send_response(200)
+	self.send_header("Content-type", "text/html")
+	self.send_header("Content-length", len(response))
+	self.end_headers()
 
-        # Write response to client
-        response_bytes = str.encode(response) # bytes
-        self.wfile.write(response_bytes)
-        print("Response = '" + str(response) + "'")
+	# Write response to client
+	response_bytes = str.encode(response) # bytes
+	self.wfile.write(response_bytes)
+	print("Response = '" + str(response) + "'")
 
-        print();
+	print();
 
 
 def open_browser():
     """Start a browser after waiting for half a second."""
     def _open_browser():
-        webbrowser.open('http://localhost:%s/%s' % (PORT, FILE))
+	webbrowser.open('http://localhost:%s/%s' % (PORT, FILE))
     thread = threading.Timer(0.5, _open_browser)
     thread.start()
 

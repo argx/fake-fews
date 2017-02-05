@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# Run local client (for testing)
+python src/client.py
