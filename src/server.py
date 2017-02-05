@@ -13,7 +13,7 @@ import ssl
 FILE = 'frontend.html'
 PORT = 8080
 
-classifier = Model()
+server_classifier = Model()
 
 def classifyPost(params):
 
@@ -26,8 +26,10 @@ def classifyPost(params):
     print("title = '" + title + "'")
     print("domain = '" + domain + "'")
     print("url = '" + url + "'")
+    
+    credibility = server_classifier.classify(title, url, domain) 
 
-    return "0";
+    return credibility
 
 def feedPost(params):
 
@@ -38,10 +40,14 @@ def feedPost(params):
     url = unshorten_url(urllib.parse.unquote(params["url"][0]))
     y = params["y"][0]
 
+    # Debug output
     print("title = '" + title + "'")
     print("domain = '" + domain + "'")
     print("url = '" + url + "'")
     print("y = '" + y + "'")
+
+    # Add data to server
+    server_classifier.add_data(title, y, url, domain) 
 
     return "Success!";
 
