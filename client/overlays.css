@@ -1,0 +1,24 @@
+.verification-message{
+    padding-top: 1em;
+  	margin-left: 12px;
+    margin-top: 10px;
+    margin-right: 12px;
+    margin-bottom: 6px;
+    height: 20px;
+
+    opacity: 1.0;
+    z-index: 100;
+}
+
+.slickbits-overlay-button {
+	margin-left: 3px;
+  opacity: 1.0;
+  z-index: 100;
+}
+
+.fake-news-post {
+  background-color: #EEE;
+  border-top: 1em solid #FF3328;
+  border-radius-top-left: 0.5em;
+  border-radius-top-right: 0.5em;
+}
