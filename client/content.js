@@ -16,6 +16,10 @@ function getVerificationOverlayHTML(post_title, post_domain, post_url) {
 function verificationButtonClickHandler() {
 	$(this).attr("title", "Your response has been recorded!");
 	$(this).tooltip();
+
+  let username = getUsername();
+  alert("Hello, " + username);
+
 	let post_title = $(this).data('title');
 	let post_classification = $(this).data('classification');
 	let post_url = $(this).data('url');
@@ -26,12 +30,18 @@ $.post(cur_post_url, '', function(data) {console.log("RESPONSE RECEIVED " + data
 
 }
 
+
+// Start here!
 flagPosts();
 window.setInterval(function(){
   flagPosts();
 }, 4000);
 
-
+function getUsername() {
+  let username = $(".fbxWelcomeBoxName").text();
+  console.log("Found username = " + username + ", which will be used to note which users are giving votes.");
+  return username;
+}
 
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
 
