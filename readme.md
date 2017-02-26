@@ -1,4 +1,5 @@
 # FakeFews
+**[TODO]** Get server code on AWS server and client on Google Chrome App Store.
 <hr />
 ### Summary
 Candidate solution for Facebook's [fake news problem](http://www.newyorker.com/news/news-desk/solving-the-problem-of-fake-news) using machine learning and crowd-sourcing. Takes form of a Chrome extension. Developed in under 24 hours at 2017 [Crimson Code](http://hackathon.eecs.wsu.edu/) hackathon at Washington State University.
