@@ -5,8 +5,12 @@
 var $ = jQuery;
 var classified_posts = 0;
 
-var ajax_classify_server_url = "https://localhost:8080/classifyPost";
-var ajax_feed_server_url = "https://localhost:8080/feedPost";
+var server_dns = "ec2-52-206-65-234.compute-1.amazonaws.com";
+var server_port = "8080";
+var server_url = "http://" + server_dns + ":" + server_port
+
+var ajax_classify_server_url = server_url + "/classifyPost";
+var ajax_feed_server_url =  server_url + "/feedPost";
 
 function getVerificationOverlayHTML(post_title, post_domain, post_url) {
 	let verificationOverlayHTML = "<div class='verification-message'>Help SlickBits get better! Is this post fake? <span style='float:right'><button class='slickbits-overlay-button' data-classification='real' data-title=" + encodeURIComponent(post_title) + " data-domain=" + encodeURIComponent(post_domain) + " data-url=" + encodeURIComponent(post_url) + ">Nope</button><button class='slickbits-overlay-button' data-classification='fake' data-title=" + encodeURIComponent(post_title) + " data-domain=" + encodeURIComponent(post_domain) + " data-url=" + encodeURIComponent(post_url) + ">Yes, this is Fake News</button></span></div><hr>";
