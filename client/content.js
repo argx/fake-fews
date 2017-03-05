@@ -21,8 +21,8 @@ function verificationButtonClickHandler() {
 	$(this).attr("title", "Your response has been recorded!");
 	$(this).tooltip();
 
-  let username = getUsername();
-  alert("Hello, " + username);
+  let user_id = getUserID();
+  console.log("Hello, '" + user_id + "' -  thanks for the feedback!");
 
 	let post_title = $(this).data('title');
 	let post_classification = $(this).data('classification');
@@ -34,17 +34,39 @@ $.post(cur_post_url, '', function(data) {console.log("RESPONSE RECEIVED " + data
 
 }
 
-
 // Start here!
 flagPosts();
 window.setInterval(function(){
   flagPosts();
 }, 4000);
 
-function getUsername() {
-  let username = $(".fbxWelcomeBoxName").text();
-  console.log("Found username = " + username + ", which will be used to note which users are giving votes.");
-  return username;
+// TODO: Move to utility function file
+// Parse the query params from, like from www.example.com/?id=1101&thing=abcd
+function getQueryParams(url) {
+	let i = url.indexOf("?"); 						// Query params start
+	let query = url.substring(i + 1);					// Grab query
+	let paramTokens = query.split("&"); 	// Breakup individual params
+
+	// Tokenize each "arg=val" string to [arg, val]
+	let params = [];
+	paramTokens.forEach(param => {
+		let pTok = param.split("=");
+		let arg = pTok[0];
+		let val = pTok[1];
+		params.push([arg, val]);
+	});
+
+	return params;
+}
+
+// Reliably get current user's name in any Facebook page context
+function getUserID() {
+
+	let user_bar = $("[data-click='profile_icon']");
+	let user_id = getQueryParams(user_bar.find("a").attr("href"));
+	let user_name = user_bar.find("span").text();
+
+  return user_id;
 }
 
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
