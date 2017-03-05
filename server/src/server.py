@@ -26,8 +26,8 @@ def classifyPost(params):
     print("title = '" + title + "'")
     print("domain = '" + domain + "'")
     print("url = '" + url + "'")
-    
-    credibility = server_classifier.classify(title, url, domain) 
+
+    credibility = server_classifier.classify(title, url, domain)
 
     return credibility
 
@@ -39,15 +39,18 @@ def feedPost(params):
     domain = urllib.parse.unquote(params["domain"][0])
     url = unshorten_url(urllib.parse.unquote(params["url"][0]))
     y = params["y"][0]
+    user_id = params["user_id"][0];
 
     # Debug output
     print("title = '" + title + "'")
     print("domain = '" + domain + "'")
     print("url = '" + url + "'")
     print("y = '" + y + "'")
+    print("user_id = '" + user_id + "'")
 
     # Add data to server
-    server_classifier.add_data(title, y, url, domain) 
+    # TODO: Incorporate user_id into classifier somehow
+    server_classifier.add_data(title, y, url, domain)
 
     return "Success!";
 

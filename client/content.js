@@ -1,11 +1,16 @@
 
 "use strict";
 
+// Running production or development (local) server
+var localTesting = false;
+
 // Globals
 var $ = jQuery;
 var classified_posts = 0;
 
-var server_dns = "ec2-52-206-65-234.compute-1.amazonaws.com";
+var server_dns = (localTesting)
+	? "localhost"
+	: "ec2-52-206-65-234.compute-1.amazonaws.com";
 var server_port = "8080";
 var server_url = "http://" + server_dns + ":" + server_port
 
@@ -25,11 +30,19 @@ function verificationButtonClickHandler() {
   let user_id = getUserID();
   console.log("Hello, '" + user_id + "' -  thanks for the feedback!");
 
+	// Get posted article fields
 	let post_title = $(this).data('title');
 	let post_classification = $(this).data('classification');
 	let post_url = $(this).data('url');
 	let post_domain = $(this).data('domain');
-  let cur_post_url = ajax_feed_server_url + "?title=" + post_title + "&url=" + post_url + "&domain=" + post_domain + "&y=" + post_classification;
+
+  let cur_post_url = (ajax_feed_server_url +
+		 "?title=" + post_title +
+		 "&url=" + \ post_url +
+		 "&domain=" + post_domain +
+		 "&y=" + post_classification +
+		 "&user_id=" + user_id
+	 );
 	$.post(cur_post_url, '', function(data) {console.log("RESPONSE RECEIVED " + data);})
 }
 
