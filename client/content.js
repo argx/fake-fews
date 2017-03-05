@@ -21,6 +21,7 @@ function verificationButtonClickHandler() {
 	$(this).attr("title", "Your response has been recorded!");
 	$(this).tooltip();
 
+	// Get unique user ID
   let user_id = getUserID();
   console.log("Hello, '" + user_id + "' -  thanks for the feedback!");
 
@@ -28,10 +29,8 @@ function verificationButtonClickHandler() {
 	let post_classification = $(this).data('classification');
 	let post_url = $(this).data('url');
 	let post_domain = $(this).data('domain');
-  	let cur_post_url = ajax_feed_server_url + "?title=" + post_title + "&url=" + post_url + "&domain=" + post_domain + "&y=" + post_classification;
-$.post(cur_post_url, '', function(data) {console.log("RESPONSE RECEIVED " + data);})
-
-
+  let cur_post_url = ajax_feed_server_url + "?title=" + post_title + "&url=" + post_url + "&domain=" + post_domain + "&y=" + post_classification;
+	$.post(cur_post_url, '', function(data) {console.log("RESPONSE RECEIVED " + data);})
 }
 
 // Start here!
@@ -42,18 +41,19 @@ window.setInterval(function(){
 
 // TODO: Move to utility function file
 // Parse the query params from, like from www.example.com/?id=1101&thing=abcd
+// and will return a dictionary like {"id":"1101", "thing"="abcd"}
 function getQueryParams(url) {
 	let i = url.indexOf("?"); 						// Query params start
 	let query = url.substring(i + 1);					// Grab query
 	let paramTokens = query.split("&"); 	// Breakup individual params
 
 	// Tokenize each "arg=val" string to [arg, val]
-	let params = [];
+	let params = {};
 	paramTokens.forEach(param => {
 		let pTok = param.split("=");
 		let arg = pTok[0];
 		let val = pTok[1];
-		params.push([arg, val]);
+		params[arg] = val;
 	});
 
 	return params;
@@ -63,7 +63,7 @@ function getQueryParams(url) {
 function getUserID() {
 
 	let user_bar = $("[data-click='profile_icon']");
-	let user_id = getQueryParams(user_bar.find("a").attr("href"));
+	let user_id = getQueryParams(user_bar.find("a").attr("href"))["id"];
 	let user_name = user_bar.find("span").text();
 
   return user_id;
