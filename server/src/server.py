@@ -15,7 +15,14 @@ PORT = 8080
 
 server_classifier = Model()
 
+def testModel(params):
+    """ Handle /testModel """
+
+    accuracy = server_classifier.test()
+    return accuracy
+
 def classifyPost(params):
+    """ Handle /classifyPost """
 
     print("Classifying post!")
 
@@ -32,6 +39,7 @@ def classifyPost(params):
     return credibility
 
 def feedPost(params):
+    """ Handle /feedPost """
 
     print("Feeding post!")
 
@@ -96,12 +104,14 @@ class ClassificationHandler(http.server.SimpleHTTPRequestHandler):
         # Get params
         params = urlparse.parse_qs(urlparse.urlparse(path).query)
 
-        # Call API
+        # Call API: classifyPost, feedPost, testModel
         response = None
         if api == "/classifyPost":
             response = classifyPost(params)
         elif api == "/feedPost":
             response = feedPost(params)
+        elif api == "/testModel":
+            response = testModel(params)
         else:
             response = "error" # done fucked up
 

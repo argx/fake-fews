@@ -12,10 +12,11 @@ class DomainModel:
     newClassifier = None
 
     def __init__(self):
+        """ Once constructed, train the model """
         self.train()
 
     def train(self):
-        """Train on base and FB data"""
+        """ Train on base and FB data """
 
         with open('res/data/base_data.csv', 'r') as csv_file:
 
@@ -25,7 +26,7 @@ class DomainModel:
 
                     i += 1
 
-                    line_split = line 
+                    line_split = line
                     read_dict = {}
 
                     if i == 1 or len(line_split) <= 2 or len(line_split[0]) == 0:
@@ -37,7 +38,7 @@ class DomainModel:
                         read_dict['text'] = line_split[6].strip()
                     else:
                         read_dict['text'] = line_split[5].strip()
-                    
+
                     print(read_dict)
 
                     self.training_data.append(read_dict)
@@ -53,7 +54,7 @@ class DomainModel:
 
                     i += 1
 
-                    line_split = line 
+                    line_split = line
                     read_dict = {}
 
                     if i == 1 or len(line_split) <= 2:
@@ -61,11 +62,11 @@ class DomainModel:
 
                     read_dict['class'] = line_split[2].strip()
                     read_dict['text'] = line_split[5].strip()
-                    
+
                     print(read_dict)
 
                     self.training_data.append(read_dict)
-            
+
         #print training_data
         for data in self.training_data:
             self.newsTrainer.train(data['text'], data['class'])
