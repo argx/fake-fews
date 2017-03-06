@@ -12,11 +12,10 @@ class DomainModel:
     newClassifier = None
 
     def __init__(self):
-        """ Once constructed, train the model """
         self.train()
 
     def train(self):
-        """ Train on base and FB data """
+        """Train on base and FB data"""
 
         with open('res/data/base_data.csv', 'r') as csv_file:
 
