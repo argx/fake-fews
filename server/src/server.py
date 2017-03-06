@@ -60,7 +60,7 @@ def feedPost(params):
 
     # Add data to server
     # TODO: Incorporate user_id into classifier somehow
-    server_classifier.add_data(title, y, url, domain)
+    server_classifier.add_data(title, y, url, domain, user_id)
 
     return "Success!";
 

@@ -12,11 +12,18 @@ class Data:
     arr = []
     data_dir = None
     schema = "Type,Category,Credibility,Title,Content,Retrieval Source"
+    stored_data_file = "stored_data.csv"
 
     def __init__(self, data_dir):
         """ Data constructor """
 
         self.data_dir = data_dir
+
+    def store(self, line):
+        """ Write given line to stored data file """
+
+        with open(data_dir + "/" + stored_data_file) as f:
+            f.write(line)
 
     def parse(self, csv_file):
         """

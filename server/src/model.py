@@ -23,11 +23,12 @@ class Model:
     Ensemble model using classifiers on article title, content, and URL
     """
 
-    # ML models
+    # Models
     d_model = DomainModel()
     #t_model = TitleModel()
+    test_holdout = 0.25 # Portion of data to use for testing
 
-    # Data locations
+    # Data
     data_dir = "res/data/"
     data_interface = Data(data_dir)
 
@@ -35,27 +36,21 @@ class Model:
         # Do initial training
         self.train();
 
-    def add_data(self, title, y, url, domain):
+    def add_data(self, title, y, url, domain, user_id):
         """ Takes Facebook data and adds to model """
 
-        # TODO: Train title and domain model
-        #title_model
+        # Store Facebook data
+        data_type = "Article"
+        y = y[0].upper() + y[1:] # Make uppercase
+        line = data_type + ",," + y + "," + title + "," + \
+            domain + "," + url + "," + ("#" + user_id)  + "\n"
 
-        # Append data to fb_data_loc file
-        with open(self.fb_data_loc, "a") as f:
-            y = y[0].upper() + y[1:] # Make upper
-            line = ",," + y + "," + title + "," + domain + "," + url + "," + "\n"
-            f.write(line)
-
+        data_interface.store(line)
 
     def classify(self, title, url, domain):
-        """ Classify given Facebook post """
+        """ Classify given Facebook post using certain fields """
 
-        # TODO: Classify using title and domain model
-
-        #title_model
         credibility = self.d_model.classify(url)
-
         return credibility
 
     def test(self):
@@ -64,15 +59,16 @@ class Model:
         very close distribution between both the training and testing sets
         """
 
-        # Scramble the training data around
+        #test_holdout
 
-        # Split the data 75/25
+        # Split the data based on holdout percentage
 
-        # Train on the 75
+        # Train
 
-        # Test on the 25
+        # Test
         num_correct = 0
         num_wrong = 0
+        # TODO: Test
         accuracy = num_correct / (num_correct + num_wrong)
 
         # Return accuracy
@@ -82,5 +78,3 @@ class Model:
         """ Retrain on all stored examples in base and Facebook data """
 
         self.d_model.train(self.data_interface)
-
-        pass
