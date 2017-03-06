@@ -1,7 +1,7 @@
 # data.py
 
 # TODO: Look at faster data storage/retrievel technologies, like SQL
-# TODO: How about firing an event after every 20 new FB data points come?
+# TODO: How about firing an event to retrain after every 20 new FB data points come?
 
 import glob, os, random
 
@@ -17,7 +17,9 @@ class Data:
     def __init__(self, data_dir):
         """ Data constructor """
 
+        # Populate self once created
         self.data_dir = data_dir
+        self.populate()
 
     def store(self, line):
         """ Write given line to stored data file """
@@ -25,10 +27,9 @@ class Data:
         with open(data_dir + "/" + stored_data_file) as f:
             f.write(line)
 
-    def parse(self, csv_file):
+    def populate(self):
         """
-        Populate data arr from raw data_file
-        NOTE: data_file must be .csv!
+        Populate data array from all CSV files in data directory
         """
 
         # Get all data files in res/data

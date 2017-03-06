@@ -59,16 +59,19 @@ class Model:
         very close distribution between both the training and testing sets
         """
 
-        #test_holdout
-
         # Split the data based on holdout percentage
+        data_arr = self.data_interface.arr
+        split_index = int(len(data_arr) * (1 - self.test_holdout))
+        train_data = data_arr[:split_index]
+        test_data = data_arr[split_index:]
+
+        # TODO: Look at running a FRESH classifier in the background
 
         # Train
 
         # Test
         num_correct = 0
         num_wrong = 0
-        # TODO: Test
         accuracy = num_correct / (num_correct + num_wrong)
 
         # Return accuracy
