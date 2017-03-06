@@ -1,3 +1,5 @@
+# server.py
+
 import threading
 import webbrowser
 import http.server
@@ -84,7 +86,7 @@ def unshorten_url(url):
         return url
 
 class ClassificationHandler(http.server.SimpleHTTPRequestHandler):
-    """HTTP Handler for Facebook Chrome extension"""
+    """ HTTP Handler for Facebook Chrome extension """
 
     def strip_extra(self, arr):
         redux_arr = []
@@ -95,7 +97,10 @@ class ClassificationHandler(http.server.SimpleHTTPRequestHandler):
         return redux_arr
 
     def do_POST(self):
-        """Handle a POST request by parsing training example and feeding into model"""
+        """
+        Handle a POST request by parsing training example and feeding
+        into model
+        """
 
         path = self.path
         api = path.split("?")[0];
@@ -130,14 +135,14 @@ class ClassificationHandler(http.server.SimpleHTTPRequestHandler):
 
 
 def open_browser():
-    """Start a browser after waiting for half a second."""
+    """ Start a browser after waiting for half a second. """
     def _open_browser():
         webbrowser.open('http://localhost:%s/%s' % (PORT, FILE))
     thread = threading.Timer(0.5, _open_browser)
     thread.start()
 
 def start_server():
-    """Start the server."""
+    """ Start the server. """
     server_address = ("", PORT)
     server = http.server.HTTPServer(server_address, ClassificationHandler)
     # Add HTTPS certificate

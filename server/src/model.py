@@ -1,8 +1,19 @@
+# model.py
+
 from sklearn.naive_bayes import GaussianNB
 from domain_model import *
+from data import Data
 
-# Comes from Giridhar
+# TODO: Implement these models to complete ensemble classifier
 class TitleModel:
+    def __init__(self):
+        pass
+class ContentModel:
+    def __init__(self):
+        pass
+
+# TODO: Implement this blacklisting model against toxic users
+class BlacklistModel:
     def __init__(self):
         pass
 
@@ -13,13 +24,12 @@ class Model:
     """
 
     # ML models
-    #t_model = TitleModel()
     d_model = DomainModel()
+    #t_model = TitleModel()
 
     # Data locations
     data_dir = "res/data/"
-    base_data_loc = data_dir + "base_data.csv"
-    fb_data_loc = data_dir + "fb_data.csv"
+    data_interface = Data(data_dir)
 
     def __init__(self):
         # Do initial training
@@ -61,13 +71,16 @@ class Model:
         # Train on the 75
 
         # Test on the 25
+        num_correct = 0
+        num_wrong = 0
+        accuracy = num_correct / (num_correct + num_wrong)
 
         # Return accuracy
-        pass
+        return accuracy
 
     def train(self):
         """ Retrain on all stored examples in base and Facebook data """
 
-        # TODO: Train title and domain model with local data
+        self.d_model.train(self.data_interface)
 
         pass
