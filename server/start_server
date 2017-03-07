@@ -1,4 +1,6 @@
 #!/bin/bash
 
 # Run local server
-python src/server.py
+# NOTE: We have "sudo" because all outside libraries
+#       are kept in the sudo /bin (we think)
+sudo python src/server.py

@@ -1,12 +1,21 @@
 
 "use strict";
 
+// Running production or development (local) server
+var localTesting = false;
+
 // Globals
 var $ = jQuery;
 var classified_posts = 0;
 
-var ajax_classify_server_url = "https://localhost:8080/classifyPost";
-var ajax_feed_server_url = "https://localhost:8080/feedPost";
+var server_dns = (localTesting)
+	? "localhost"
+	: "ec2-52-206-65-234.compute-1.amazonaws.com";
+var server_port = "8080";
+var server_url = "http://" + server_dns + ":" + server_port
+
+var ajax_classify_server_url = server_url + "/classifyPost";
+var ajax_feed_server_url =  server_url + "/feedPost";
 
 function getVerificationOverlayHTML(post_title, post_domain, post_url) {
 	let verificationOverlayHTML = "<div class='verification-message'>Help SlickBits get better! Is this post fake? <span style='float:right'><button class='slickbits-overlay-button' data-classification='real' data-title=" + encodeURIComponent(post_title) + " data-domain=" + encodeURIComponent(post_domain) + " data-url=" + encodeURIComponent(post_url) + ">Nope</button><button class='slickbits-overlay-button' data-classification='fake' data-title=" + encodeURIComponent(post_title) + " data-domain=" + encodeURIComponent(post_domain) + " data-url=" + encodeURIComponent(post_url) + ">Yes, this is Fake News</button></span></div><hr>";
@@ -17,19 +26,25 @@ function verificationButtonClickHandler() {
 	$(this).attr("title", "Your response has been recorded!");
 	$(this).tooltip();
 
-  let username = getUsername();
-  alert("Hello, " + username);
+	// Get unique user ID
+  let user_id = getUserID();
+  console.log("Hello, '" + user_id + "' -  thanks for the feedback!");
 
+	// Get posted article fields
 	let post_title = $(this).data('title');
 	let post_classification = $(this).data('classification');
 	let post_url = $(this).data('url');
 	let post_domain = $(this).data('domain');
-  	let cur_post_url = ajax_feed_server_url + "?title=" + post_title + "&url=" + post_url + "&domain=" + post_domain + "&y=" + post_classification;
-$.post(cur_post_url, '', function(data) {console.log("RESPONSE RECEIVED " + data);})
 
-
+  let cur_post_url = (ajax_feed_server_url +
+		 "?title=" + post_title +
+		 "&url=" + \ post_url +
+		 "&domain=" + post_domain +
+		 "&y=" + post_classification +
+		 "&user_id=" + user_id
+	 );
+	$.post(cur_post_url, '', function(data) {console.log("RESPONSE RECEIVED " + data);})
 }
-
 
 // Start here!
 flagPosts();
@@ -37,10 +52,34 @@ window.setInterval(function(){
   flagPosts();
 }, 4000);
 
-function getUsername() {
-  let username = $(".fbxWelcomeBoxName").text();
-  console.log("Found username = " + username + ", which will be used to note which users are giving votes.");
-  return username;
+// TODO: Move to utility function file
+// Parse the query params from, like from www.example.com/?id=1101&thing=abcd
+// and will return a dictionary like {"id":"1101", "thing"="abcd"}
+function getQueryParams(url) {
+	let i = url.indexOf("?"); 						// Query params start
+	let query = url.substring(i + 1);					// Grab query
+	let paramTokens = query.split("&"); 	// Breakup individual params
+
+	// Tokenize each "arg=val" string to [arg, val]
+	let params = {};
+	paramTokens.forEach(param => {
+		let pTok = param.split("=");
+		let arg = pTok[0];
+		let val = pTok[1];
+		params[arg] = val;
+	});
+
+	return params;
+}
+
+// Reliably get current user's name in any Facebook page context
+function getUserID() {
+
+	let user_bar = $("[data-click='profile_icon']");
+	let user_id = getQueryParams(user_bar.find("a").attr("href"))["id"];
+	let user_name = user_bar.find("span").text();
+
+  return user_id;
 }
 
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {

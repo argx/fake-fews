@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Stop all Python-related processes in the background
+sudo pkill python
+
+# Show any remaining processes
+echo "All remaining Python processes:"
+sudo pgrep python
+
+# Remove nohup output
+sudo rm nohup.out

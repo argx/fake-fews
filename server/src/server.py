@@ -1,3 +1,5 @@
+# server.py
+
 import threading
 import webbrowser
 import http.server
@@ -10,12 +12,21 @@ import requests
 import ssl
 
 # Globals
-FILE = 'frontend.html'
+FILE = './frontend.html'
 PORT = 8080
 
 server_classifier = Model()
 
-def classifyPost(params):
+def test_model(params):
+    """ Handle /testModel """
+
+    print("Testing model accuracy!")
+
+    accuracy = server_classifier.test()
+    return accuracy
+
+def classify_post(params):
+    """ Handle /classifyPost """
 
     print("Classifying post!")
 
@@ -26,28 +37,32 @@ def classifyPost(params):
     print("title = '" + title + "'")
     print("domain = '" + domain + "'")
     print("url = '" + url + "'")
-    
-    credibility = server_classifier.classify(title, url, domain) 
+
+    credibility = server_classifier.classify(title, url, domain)
 
     return credibility
 
-def feedPost(params):
+def feed_post(params):
+    """ Handle /feedPost """
 
-    print("Feeding post!")
+    print("Feeding post to model!")
 
     title = urllib.parse.unquote(params["title"][0])
     domain = urllib.parse.unquote(params["domain"][0])
     url = unshorten_url(urllib.parse.unquote(params["url"][0]))
     y = params["y"][0]
+    user_id = params["user_id"][0];
 
     # Debug output
     print("title = '" + title + "'")
     print("domain = '" + domain + "'")
     print("url = '" + url + "'")
     print("y = '" + y + "'")
+    print("user_id = '" + user_id + "'")
 
     # Add data to server
-    server_classifier.add_data(title, y, url, domain) 
+    # TODO: Incorporate user_id into classifier somehow
+    server_classifier.add_data(title, y, url, domain, user_id)
 
     return "Success!";
 
@@ -72,8 +87,18 @@ def unshorten_url(url):
     else:
         return url
 
-class ClassificationHandler(http.server.SimpleHTTPRequestHandler):
-    """HTTP Handler for Facebook Chrome extension"""
+def serve_root():
+    """ Return frontend interface (HTML) to user """
+
+    with open(FILE, 'r') as f:
+        file_string = f.read()
+    return file_string
+
+class APIHandler(http.server.SimpleHTTPRequestHandler):
+    """
+    HTTP Handler for all API users, which is currently just the Google Chrome
+    extension for Facebook
+    """
 
     def strip_extra(self, arr):
         redux_arr = []
@@ -84,7 +109,10 @@ class ClassificationHandler(http.server.SimpleHTTPRequestHandler):
         return redux_arr
 
     def do_POST(self):
-        """Handle a POST request by parsing training example and feeding into model"""
+        """
+        Handle a POST request by parsing training example and feeding
+        into model
+        """
 
         path = self.path
         api = path.split("?")[0];
@@ -93,14 +121,18 @@ class ClassificationHandler(http.server.SimpleHTTPRequestHandler):
         # Get params
         params = urlparse.parse_qs(urlparse.urlparse(path).query)
 
-        # Call API
+        # Call API: classifyPost, feedPost, testModel
         response = None
-        if api == "/classifyPost":
-            response = classifyPost(params)
+        if api == "/":
+            response = serve_root()
+        elif api == "/classifyPost":
+            response = classify_post(params)
         elif api == "/feedPost":
-            response = feedPost(params)
+            response = feed_post(params)
+        elif api == "/testModel":
+            response = test_model(params)
         else:
-            response = "error" # done fucked up
+            response = "error" # Done fucked up
 
         # Train on data data
         self.send_response(200)
@@ -112,21 +144,21 @@ class ClassificationHandler(http.server.SimpleHTTPRequestHandler):
         response_bytes = str.encode(response) # bytes
         self.wfile.write(response_bytes)
         print("Response = '" + str(response) + "'")
-
         print();
 
-
 def open_browser():
-    """Start a browser after waiting for half a second."""
+    """ Start a browser after waiting for half a second. """
+
     def _open_browser():
         webbrowser.open('http://localhost:%s/%s' % (PORT, FILE))
     thread = threading.Timer(0.5, _open_browser)
     thread.start()
 
 def start_server():
-    """Start the server."""
+    """ Start the server. """
+
     server_address = ("", PORT)
-    server = http.server.HTTPServer(server_address, ClassificationHandler)
+    server = http.server.HTTPServer(server_address, APIHandler)
     # Add HTTPS certificate
     server.socket = ssl.wrap_socket(server.socket, certfile="./server.pem", server_side=True)
     server.serve_forever()

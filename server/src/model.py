@@ -1,51 +1,83 @@
+# model.py
+
 from sklearn.naive_bayes import GaussianNB
 from domain_model import *
+from data import Data
 
-# Comes from Giridhar
+# TODO: Implement these models to complete ensemble classifier
 class TitleModel:
+    def __init__(self):
+        pass
+class ContentModel:
+    def __init__(self):
+        pass
+
+# TODO: Implement this blacklisting model against toxic users
+class BlacklistModel:
     def __init__(self):
         pass
 
 class Model:
+    """
+    [In Progress]
+    Ensemble model using classifiers on article title, content, and URL
+    """
 
-    #t_model = TitleModel()
+    # Models
     d_model = DomainModel()
+    #t_model = TitleModel()
+    test_holdout = 0.25 # Portion of data to use for testing
 
-    # Data locations
+    # Data
     data_dir = "res/data/"
-    base_data_loc = data_dir + "base_data.csv" 
-    fb_data_loc = data_dir + "fb_data.csv" 
+    data_interface = Data(data_dir)
 
     def __init__(self):
         # Do initial training
         self.train();
-   
-    def add_data(self, title, y, url, domain):
-        """Takes Facebook data and adds to model"""
 
-        # TODO: Train title and domain model
-        #title_model
+    def add_data(self, title, y, url, domain, user_id):
+        """ Takes Facebook data and adds to model """
 
-        # Append data to fb_data_loc file
-        with open(self.fb_data_loc, "a") as f:
-            y = y[0].upper() + y[1:] # Make upper
-            line = ",," + y + "," + title + "," + domain + "," + url + "," + "\n"
-            f.write(line)
-        
+        # Store Facebook data
+        data_type = "Article"
+        y = y[0].upper() + y[1:] # Make uppercase
+        line = data_type + ",," + y + "," + title + "," + \
+            domain + "," + url + "," + ("#" + user_id)  + "\n"
+
+        data_interface.store(line)
 
     def classify(self, title, url, domain):
-        """Classify given Facebook post"""
+        """ Classify given Facebook post using certain fields """
 
-        # TODO: Classify using title and domain model
-
-        #title_model
         credibility = self.d_model.classify(url)
+        return credibility
 
-        return credibility 
+    def test(self):
+        """
+        Test model using 75/25 holdout method on training data, ensuring a
+        very close distribution between both the training and testing sets
+        """
+
+        # Split the data based on holdout percentage
+        data_arr = self.data_interface.arr
+        split_index = int(len(data_arr) * (1 - self.test_holdout))
+        train_data = data_arr[:split_index]
+        test_data = data_arr[split_index:]
+
+        # TODO: Look at running a FRESH classifier in the background
+
+        # Train
+
+        # Test
+        num_correct = 0
+        num_wrong = 0
+        accuracy = num_correct / (num_correct + num_wrong)
+
+        # Return accuracy
+        return accuracy
 
     def train(self):
-        """Retrain on all stored examples in base and Facebook data"""
+        """ Retrain on all stored examples in base and Facebook data """
 
-        # TODO: Train title and domain model with local data
-
-        pass
+        self.d_model.train(self.data_interface)
