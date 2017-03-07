@@ -12,18 +12,20 @@ import requests
 import ssl
 
 # Globals
-FILE = 'frontend.html'
+FILE = './frontend.html'
 PORT = 8080
 
 server_classifier = Model()
 
-def testModel(params):
+def test_model(params):
     """ Handle /testModel """
+
+    print("Testing model accuracy!")
 
     accuracy = server_classifier.test()
     return accuracy
 
-def classifyPost(params):
+def classify_post(params):
     """ Handle /classifyPost """
 
     print("Classifying post!")
@@ -40,10 +42,10 @@ def classifyPost(params):
 
     return credibility
 
-def feedPost(params):
+def feed_post(params):
     """ Handle /feedPost """
 
-    print("Feeding post!")
+    print("Feeding post to model!")
 
     title = urllib.parse.unquote(params["title"][0])
     domain = urllib.parse.unquote(params["domain"][0])
@@ -85,8 +87,18 @@ def unshorten_url(url):
     else:
         return url
 
-class ClassificationHandler(http.server.SimpleHTTPRequestHandler):
-    """ HTTP Handler for Facebook Chrome extension """
+def serve_root():
+    """ Return frontend interface (HTML) to user """
+
+    with open(FILE, 'r') as f:
+        file_string = f.read()
+    return file_string
+
+class APIHandler(http.server.SimpleHTTPRequestHandler):
+    """
+    HTTP Handler for all API users, which is currently just the Google Chrome
+    extension for Facebook
+    """
 
     def strip_extra(self, arr):
         redux_arr = []
@@ -111,14 +123,16 @@ class ClassificationHandler(http.server.SimpleHTTPRequestHandler):
 
         # Call API: classifyPost, feedPost, testModel
         response = None
-        if api == "/classifyPost":
-            response = classifyPost(params)
+        if api == "/":
+            response = serve_root()
+        elif api == "/classifyPost":
+            response = classify_post(params)
         elif api == "/feedPost":
-            response = feedPost(params)
+            response = feed_post(params)
         elif api == "/testModel":
-            response = testModel(params)
+            response = test_model(params)
         else:
-            response = "error" # done fucked up
+            response = "error" # Done fucked up
 
         # Train on data data
         self.send_response(200)
@@ -130,12 +144,11 @@ class ClassificationHandler(http.server.SimpleHTTPRequestHandler):
         response_bytes = str.encode(response) # bytes
         self.wfile.write(response_bytes)
         print("Response = '" + str(response) + "'")
-
         print();
-
 
 def open_browser():
     """ Start a browser after waiting for half a second. """
+
     def _open_browser():
         webbrowser.open('http://localhost:%s/%s' % (PORT, FILE))
     thread = threading.Timer(0.5, _open_browser)
@@ -143,8 +156,9 @@ def open_browser():
 
 def start_server():
     """ Start the server. """
+
     server_address = ("", PORT)
-    server = http.server.HTTPServer(server_address, ClassificationHandler)
+    server = http.server.HTTPServer(server_address, APIHandler)
     # Add HTTPS certificate
     server.socket = ssl.wrap_socket(server.socket, certfile="./server.pem", server_side=True)
     server.serve_forever()
