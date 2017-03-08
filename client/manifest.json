@@ -6,21 +6,21 @@
   "version": "0.0.1",
 
   "icons": {
-    "16": "icon_16.jpeg",
-    "48": "icon_48.jpeg",
-    "128": "icon_128.jpeg"
+    "16": "res/icon_16.jpeg",
+    "48": "res/icon_48.jpeg",
+    "128": "res/icon_128.jpeg"
   },
 
   "content_scripts": [
     {
       "matches": ["https://www.facebook.com/*"],
-      "js": ["jquery-3.1.1.min.js", "jquery-ui.min.js","content.js"],
-      "css": ["overlays.css"],
+      "js": ["js/jquery-3.1.1.min.js", "js/jquery-ui.min.js", "js/content.js"],
+      "css": ["css/overlays.css"],
       "run_at": "document_idle"
     }
   ],
   "browser_action": {
-    "default_icon": "icon_128.jpeg",
+    "default_icon": "res/icon_128.jpeg",
     "default_popup": "popup.html"
   },
   "permissions": [
