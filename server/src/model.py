@@ -23,14 +23,14 @@ class Model:
     Ensemble model using classifiers on article title, content, and URL
     """
 
-    # Models
-    d_model = DomainModel()
-    #t_model = TitleModel()
-    test_holdout = 0.25 # Portion of data to use for testing
-
     # Data
     data_dir = "res/data/"
     data_interface = Data(data_dir)
+
+    # Models
+    d_model = DomainModel(data_interface)
+    #t_model = TitleModel()
+    test_holdout = 0.25 # Portion of data to use for testing
 
     def __init__(self):
         # Do initial training
