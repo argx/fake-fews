@@ -31,7 +31,7 @@ class DomainModel:
 
         # Run through each training example in data interface and
         # feed them into model
-        for data_point in self.data_interface:
+        for data_point in self.data_interface.arr:
             data_class = data_point[2].strip()  # Class is "Credibility"
             data_text = data_point[4].strip()   # Text is "Content URL"
             self.newsTrainer.train(data_text, data_class)

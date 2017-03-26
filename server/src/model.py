@@ -25,16 +25,17 @@ class Model:
 
     # Data
     data_dir = "res/data/"
-    data_interface = Data(data_dir)
 
-    # Models
-    d_model = DomainModel(data_interface)
-    #t_model = TitleModel()
-    test_holdout = 0.25 # Portion of data to use for testing
+    def __init__(self, testing = False):
 
-    def __init__(self):
+        # Grab data
+        self.data_interface = Data(data_dir)
+
+        # Models
+        self.d_model = DomainModel(data_interface)
+
         # Do initial training
-        self.train();
+        if not testing: self.train();
 
     def add_data(self, title, y, url, domain, user_id):
         """ Takes Facebook data and adds to model """
@@ -53,11 +54,14 @@ class Model:
         credibility = self.d_model.classify(url)
         return credibility
 
-    def test(self):
+    def test(self, fold_num):
         """
-        Test model using 75/25 holdout method on training data, ensuring a
+        Test model using variable holdout method on training data, ensuring a
         very close distribution between both the training and testing sets
         """
+
+        # TODO: Look at running a FRESH classifier in the background
+        # TODO: Integrate with testModel API call
 
         # Split the data based on holdout percentage
         data_arr = self.data_interface.arr
@@ -65,14 +69,14 @@ class Model:
         train_data = data_arr[:split_index]
         test_data = data_arr[split_index:]
 
-        # TODO: Look at running a FRESH classifier in the background
-
         # Train
+        # TODO
 
         # Test
         num_correct = 0
         num_wrong = 0
         accuracy = num_correct / (num_correct + num_wrong)
+        # TODO
 
         # Return accuracy
         return accuracy
@@ -80,4 +84,4 @@ class Model:
     def train(self):
         """ Retrain on all stored examples in base and Facebook data """
 
-        self.d_model.train(self.data_interface)
+        self.d_model.train()
