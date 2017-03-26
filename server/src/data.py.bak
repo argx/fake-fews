@@ -56,8 +56,8 @@ class Data:
 
             # Check for schema compatibility
             file_schema = csv_file.readline()
-            print(csv_file)
-            print(file_schema)
+	    	print(csv_file)
+	    	print(file_schema)
             if file_schema != self.schema:
                 raise ValueError("File's schema incompatible")
 
@@ -66,13 +66,13 @@ class Data:
             reader = csv.reader(csv_file)
             for line in reader:
 
-                # Skip schema row
-                if i == 0: continue
+                    # Skip schema row
+                    if i == 0: continue
 
-                # Grab parsed line values
-                line_vals = line
-                file_parsed.append(line_vals)
+                    # Grab parsed line values
+                    line_vals = line
+                    file_parsed.append(line_vals)
 
-                i += 1
+                    i += 1
 
         return file_parsed
