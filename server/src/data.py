@@ -12,13 +12,21 @@ class Data:
     schema = "Type,Category,Credibility,Title,Content,Retrieval Source"
     stored_data_file = "stored_data.csv"
 
-    def __init__(self, data_dir):
-        """ Data constructor """
+    def __init__(self, data_dir = None, data_list = None):
+        """
+        Data constructor: either populate from given data dir or use given
+        data list
+        """
 
-        # Populate self once created
         self.arr = []
-        self.data_dir = data_dir
-        self.populate()
+        if data_dir is not None:
+            # Populate self once created
+            self.data_dir = data_dir
+            self.populate()
+        else:
+            # Accept given data list
+            self.arr = data_list
+            random.shuffle(self.arr)
 
     def store(self, line):
         """ Write given line to stored data file """
@@ -39,8 +47,8 @@ class Data:
             file_parsed = self.parse_file(f)
             self.arr += file_parsed
 
-            # Shuffle data array (because training order has effects)
-            random.shuffle(self.arr)
+        # Shuffle data array (because training order has effects)
+        random.shuffle(self.arr)
 
     def parse_file(self, f):
         """
