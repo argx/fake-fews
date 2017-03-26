@@ -35,6 +35,8 @@ class TestModel:
 
         # TODO: Look at running a FRESH classifier in the background
         # TODO: Integrate with testModel API call
+        # TODO: Run different training/testing configs for folds
+        # TODO: Ensure uniform distribution of fake-to-real news in folds
 
         # Split the data based on holdout percentage
         main_data = Data(data_dir = "res/data/")
@@ -55,12 +57,10 @@ class TestModel:
             training_data += train_fold
 
         current_fold_accuracy = self.find_accuracy(training_data, test_fold)
-        print("ACCURACY", current_fold_accuracy)
+        print("Accuracy (k = {}, L = {}) = {}".format(fold_num, data_len, \
+            current_fold_accuracy))
 
-        print([len(x) for x in fold_list])
-
-
-        # Return accuracy
+        print("Fold lengths", [len(x) for x in fold_list])
 
 def main():
     fold_num = 5
