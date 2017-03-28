@@ -3,4 +3,4 @@
 # Run local server
 # NOTE: We have "sudo" because all outside libraries
 #       are kept in the sudo /bin (we think)
-sudo python src/server.py
+sudo python3 src/server.py

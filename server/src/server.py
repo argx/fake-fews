@@ -160,7 +160,7 @@ def start_server():
     server_address = ("", PORT)
     server = http.server.HTTPServer(server_address, APIHandler)
     # Add HTTPS certificate
-    server.socket = ssl.wrap_socket(server.socket, certfile="./server.pem", server_side=True)
+    #server.socket = ssl.wrap_socket(server.socket, certfile="./server.pem", server_side=True)
     server.serve_forever()
 
 if __name__ == "__main__":

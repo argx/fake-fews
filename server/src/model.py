@@ -3,6 +3,7 @@
 from sklearn.naive_bayes import GaussianNB
 from domain_model import *
 from data import Data
+import math
 
 # TODO: Implement these models to complete ensemble classifier
 class TitleModel:
@@ -23,16 +24,19 @@ class Model:
     Ensemble model using classifiers on article title, content, and URL
     """
 
-    # Models
-    d_model = DomainModel()
-    #t_model = TitleModel()
-    test_holdout = 0.25 # Portion of data to use for testing
-
     # Data
     data_dir = "res/data/"
-    data_interface = Data(data_dir)
 
-    def __init__(self):
+    def __init__(self, data_interface = None):
+
+        # Grab data
+        if data_interface is None:
+            self.data_interface = Data(self.data_dir)
+        else: self.data_interface = data_interface
+
+        # Models
+        self.d_model = DomainModel(self.data_interface)
+
         # Do initial training
         self.train();
 
@@ -53,31 +57,7 @@ class Model:
         credibility = self.d_model.classify(url)
         return credibility
 
-    def test(self):
-        """
-        Test model using 75/25 holdout method on training data, ensuring a
-        very close distribution between both the training and testing sets
-        """
-
-        # Split the data based on holdout percentage
-        data_arr = self.data_interface.arr
-        split_index = int(len(data_arr) * (1 - self.test_holdout))
-        train_data = data_arr[:split_index]
-        test_data = data_arr[split_index:]
-
-        # TODO: Look at running a FRESH classifier in the background
-
-        # Train
-
-        # Test
-        num_correct = 0
-        num_wrong = 0
-        accuracy = num_correct / (num_correct + num_wrong)
-
-        # Return accuracy
-        return accuracy
-
     def train(self):
         """ Retrain on all stored examples in base and Facebook data """
 
-        self.d_model.train(self.data_interface)
+        self.d_model.train()
