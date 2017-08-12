@@ -1,7 +1,9 @@
 # FakeFews
 **Facebook Fake News Classifier!** (Currently experiencing 95% testing accuracy using k-fold cross validation)
 <hr />
+
 ### Summary
+
 Candidate solution for Facebook's [fake news problem](http://www.newyorker.com/news/news-desk/solving-the-problem-of-fake-news) using machine learning and crowd-sourcing. Takes form of a Chrome extension. Developed in under 24 hours at 2017 [Crimson Code](http://hackathon.eecs.wsu.edu/) hackathon at Washington State University.
 
 Some notes:
@@ -11,10 +13,13 @@ Some notes:
 * Chrome extension is not yet available on Chrome App Store - this is in the works!
 
 ### Example
+
 Here's an example classification of fake news, as would appear in your Facebook feed:
 <img src="/res/real_classification.png" width="1000"> 
 <hr />
+
 ### Contributions
+
 This was a great and challenging project, and we plan on taking this further. Of course, this couldn't have been completed without the rest of team _SlickBits_: 
 * **Shyam** ([@gopshyam](https://github.com/gopshyam))
 * **Anand** ([@Andyrocks143](https://github.com/Andyrocks143))
