@@ -1,6 +1,5 @@
 # FakeFews
 **Facebook Fake News Classifier!** (Currently experiencing 95% testing accuracy using k-fold cross validation)
-<hr />
 
 ### Summary
 
